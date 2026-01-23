@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllAccess - Bad Bunny - Confirmar Operación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        /* NAVBAR FIJA */
+        .navbar {
+            background: #000;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 2000;
+            box-sizing: border-box;
+        }
+
+        .navbar .logo img {
+            height: 25px;
+        }
+
+        .menu-icon {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* MENÚ LATERAL */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 2001;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        .menu-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 2002;
+            overflow-y: auto;
+        }
+
+        .menu-sidebar.active {
+            right: 0;
+        }
+
+        .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .menu-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            background: none;
+            border: none;
+        }
+
+        .menu-items {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            color: #000;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .menu-item:hover {
+            background: #f9f9f9;
+            color: #7c00e2;
+        }
+
+        .content-wrapper {
+            padding-top: 49px;
+            padding-bottom: 80px;
+            background-color: #f4f4f4;
+            min-height: 100vh;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        .confirmation-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .alert-box {
+            background: #f0f4ff;
+            border: 1px solid #d0deff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            color: #7c00e2;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .section-header a {
+            color: #7c00e2;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .event-date {
+            font-size: 14px;
+            color: #7c00e2;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .ticket-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #7c00e2;
+        }
+
+        .ticket-item-info {
+            flex: 1;
+        }
+
+        .ticket-item-name {
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .ticket-item-details {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .ticket-item-seat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .ticket-item-price {
+            font-weight: 700;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .cost-section {
+            margin-top: 30px;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .cost-item.total {
+            font-weight: 700;
+            font-size: 18px;
+            border: none;
+            padding: 20px 0;
+            background: #f9f9f9;
+            margin: 0 -30px;
+            padding: 20px 30px;
+        }
+
+        .cost-label {
+            color: #666;
+        }
+
+        .cost-value {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .cost-item.total .cost-label {
+            color: #000;
+        }
+
+        .cost-item.total .cost-value {
+            color: #000;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* BARRA DE TOTAL */
+        .total-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1500;
+        }
+
+        .btn-confirm {
+            background: #7c00e2;
+            color: white;
+            border: none;
+            padding: 14px 60px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .btn-confirm:hover {
+            background: #6a00cc;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 22px;
+            }
+
+            .confirmation-container {
+                padding: 20px;
+            }
+
+            .btn-confirm {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+
+            .total-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cost-item.total {
+                margin: 20px -20px 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='bad-bunny.html'" style="cursor: pointer;"><img src="images/allaccess-clear.png" alt="AllAccess"></div>
+        <div class="menu-icon" onclick="toggleMenu()" style="cursor: pointer;">☰</div>
+    </nav>
+
+    <!-- MENÚ LATERAL -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+    <div class="menu-sidebar" id="menuSidebar">
+        <div class="menu-header">
+            <h3>Menú</h3>
+            <button class="menu-close" onclick="closeMenu()">×</button>
+        </div>
+        <div class="menu-items">
+            <a href="my-entries.html" class="menu-item">Mis entradas</a>
+            <a href="bad-bunny.html" class="menu-item">Inicio</a>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="main-container">
+            <h1 class="page-title">Confirma la operación</h1>
+
+            <div class="confirmation-container">
+                <div class="section-header">
+                    <h3>Resumen de compra</h3>
+                    <a href="#" onclick="cancelPurchase(event)">Cancelar compra</a>
+                </div>
+
+                <div class="event-date" id="eventDate">13/02/2026 20:00</div>
+
+                <div id="ticketItems"></div>
+
+                <div class="cost-section">
+                    <div class="cost-item">
+                        <span class="cost-label">Cargo por servicio</span>
+                        <span class="cost-value" id="serviceFeeDisplay">$ 55.500,00</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-label">Costo de entrega: Quentro</span>
+                        <span class="cost-value">$ 0,00</span>
+                    </div>
+                    <div class="cost-item total">
+                        <span class="cost-label">Total</span>
+                        <span class="cost-value" id="totalDisplay">$ 425.500,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="total-bar">
+        <button class="btn-confirm" onclick="confirmReservation()">Reservar compra</button>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            
+            overlay.classList.remove('active');
+            sidebar.classList.remove('active');
+        }
+
+        // Cerrar menú al hacer click en un enlace
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', closeMenu);
+        });
+
+        // Obtener datos de la sesión
+        let selectedSector = sessionStorage.getItem('selectedSector') || 'Campo Delantero';
+        let selectedQuantity = parseInt(sessionStorage.getItem('selectedQuantity')) || 1;
+        let basePrice = parseFloat(sessionStorage.getItem('basePrice')) || 350000;
+        let ticketData = JSON.parse(sessionStorage.getItem('ticketData') || '[]');
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            displayTicketItems();
+            setEventDate();
+        });
+
+        function displayTicketItems() {
+            const container = document.getElementById('ticketItems');
+            let html = '';
+
+            for (let i = 0; i < ticketData.length; i++) {
+                const ticket = ticketData[i];
+                html += `
+                    <div class="ticket-item">
+                        <div class="ticket-item-info">
+                            <div class="ticket-item-name">${selectedQuantity} x ${selectedSector}</div>
+                            <div class="ticket-item-details">- ${selectedSector} ($ ${basePrice.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2})})</div>
+                            <div class="ticket-item-seat">
+                                🪑 ${ticket.fila}${ticket.asiento.toString().padStart(2, '0')}.${(i+1).toString().padStart(2, '0')} - ${i+1}
+                            </div>
+                        </div>
+                        <div class="ticket-item-price">$ ${basePrice.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const subtotal = basePrice * selectedQuantity;
+            const serviceFee = 55500;
+            const deliveryCost = 0; // Quentro es gratis
+            const total = subtotal + serviceFee + deliveryCost;
+
+            document.getElementById('serviceFeeDisplay').textContent = '$ ' + serviceFee.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('totalDisplay').textContent = '$ ' + total.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function confirmReservation() {
+            window.location.href = 'payment.html';
+        }
+
+        function cancelPurchase(e) {
+            e.preventDefault();
+            if (confirm('¿Deseas cancelar la compra?')) {
+                sessionStorage.clear();
+                window.location.href = 'tickets.html';
+            }
+        }
+
+        function setEventDate() {
+            const eventDate = sessionStorage.getItem('eventDate') || '15/02/2026 20:00';
+            document.getElementById('eventDate').textContent = eventDate;
+        }
+    </script>
+
+</body>
+</html>
