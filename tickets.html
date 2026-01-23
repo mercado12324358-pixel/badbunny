@@ -190,7 +190,7 @@
         <header class="event-header">
             <div>
                 <h2>BAD BUNNY</h2>
-                <p>14/02/2026 20:00 - Estadio River Plate</p>
+                <p id="eventDateDisplay">14/02/2026 20:00 - Estadio River Plate</p>
             </div>
         </header>
 
@@ -358,6 +358,24 @@
     </footer>
 
     <script>
+        // Cargar y mostrar la fecha seleccionada
+        window.addEventListener('DOMContentLoaded', function() {
+            const selectedDate = sessionStorage.getItem('selectedDate') || '14';
+            
+            // Mapear números a fechas completas
+            const dateMap = {
+                '13': '13/02/2026 20:00 - Estadio River Plate',
+                '14': '14/02/2026 20:00 - Estadio River Plate',
+                '15': '15/02/2026 20:00 - Estadio River Plate'
+            };
+            
+            // Actualizar el display de fecha
+            const eventDateDisplay = document.getElementById('eventDateDisplay');
+            if (eventDateDisplay) {
+                eventDateDisplay.innerText = dateMap[selectedDate] || dateMap['14'];
+            }
+        });
+
         function toggleMenu() {
             const overlay = document.getElementById('menuOverlay');
             const sidebar = document.getElementById('menuSidebar');

@@ -472,8 +472,11 @@
         }
 
         function setEventDate() {
-            const eventDate = sessionStorage.getItem('eventDate') || '15/02/2026 20:00';
-            document.getElementById('eventDate').textContent = eventDate;
+            // Obtener la fecha del sessionStorage guardada desde tickets.html
+            const eventDate = sessionStorage.getItem('eventDate') || '14/02/2026 20:00';
+            // Extraer solo la fecha (primer 10 caracteres: DD/MM/YYYY)
+            const dateOnly = eventDate.substring(0, 10);
+            document.getElementById('eventDate').textContent = dateOnly + ' 20:00';
         }
     </script>
 

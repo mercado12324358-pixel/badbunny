@@ -595,10 +595,7 @@
             const btn = document.getElementById('buyBtn');
             const value = select.value;
             
-            if (value === '13' || value === '15') {
-                btn.disabled = true;
-                btn.textContent = 'AGOTADO';
-            } else if (value === '14') {
+            if (value === '13' || value === '14' || value === '15') {
                 btn.disabled = false;
                 btn.textContent = 'Ver entradas';
             } else {
@@ -609,7 +606,11 @@
         
         function goToTickets() {
             const select = document.getElementById('dateSelect');
-            if (select.value === '14') {
+            const selectedDate = select.value;
+            
+            if (selectedDate === '13' || selectedDate === '14' || selectedDate === '15') {
+                // Guardar la fecha seleccionada en sessionStorage
+                sessionStorage.setItem('selectedDate', selectedDate);
                 window.location.href = 'tickets.html';
             }
         }
