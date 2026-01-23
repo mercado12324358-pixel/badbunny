@@ -1,0 +1,5 @@
+<IfModule mod_headers.c>
+  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "Wed, 21 Oct 2015 07:28:00 GMT"
+</IfModule>
