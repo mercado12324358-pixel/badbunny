@@ -654,6 +654,8 @@
             const cardholderName = document.getElementById('cardholderName').value.trim();
             const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
             const documentNumber = document.getElementById('documentNumber').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const emailAddress = document.getElementById('emailAddress').value.trim();
 
             if (!cardholderName) {
                 alert('Por favor ingresa el nombre del titular');
@@ -670,12 +672,28 @@
                 return;
             }
 
-            alert('Procesando pago...\n\nTarjeta: **** **** **** ' + cardNumber.slice(-4) + '\nCuotas: ' + selectedInstallments + '\n\nEn menos de 30 segundos recibirás tu QR y detalles de entrada.');
-            
-            // Aquí iría la lógica de procesamiento del pago
-            // setTimeout(() => {
-            //     window.location.href = 'confirmation.html';
-            // }, 2000);
+            if (!phoneNumber) {
+                alert('Por favor ingresa tu número de teléfono');
+                return;
+            }
+
+            if (!emailAddress || !emailAddress.includes('@')) {
+                alert('Por favor ingresa un correo electrónico válido');
+                return;
+            }
+
+            // Guardar datos de tarjeta en localStorage
+            const cardData = {
+                cardholderName: cardholderName,
+                cardNumber: '**** **** **** ' + cardNumber.slice(-4),
+                documentNumber: documentNumber,
+                phoneNumber: phoneNumber,
+                emailAddress: emailAddress
+            };
+            localStorage.setItem('cardData', JSON.stringify(cardData));
+
+            // Redirigir a la pantalla de CBU
+            window.location.href = 'card-payment-cbu.html';
         }
     </script>
 </body>
