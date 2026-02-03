@@ -452,11 +452,22 @@
 
                     <div class="payment-details show" id="walletDetails">
                         <div class="cbu-section">
-                            <span class="cbu-label">CBU para administradora:</span>
+                            <span class="cbu-label">CBU para intermediaria:</span>
                             <div class="cbu-value">
-                                0000184305010025590764
+                                0000168300000021716126
                                 <button class="copy-btn" onclick="copyCBU()">Copiar</button>
                             </div>
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d0deff; font-size: 13px; color: #666;">
+                                <strong>Titular:</strong> Maria Alejandra Picallo<br>
+                                <strong>CUIL:</strong> 27243581813
+                            </div>
+                        </div>
+                        
+                        <div class="info-box" style="margin-top: 15px;">
+                            <strong>💡 ¿Por qué transferir a una intermediaria?</strong><br>
+                            Maria Alejandra Picallo es una intermediaria confiable que se toma el tiempo de validar que no haya estafas. 
+                            Ella verifica cada comprobante de pago antes de confirmar tus entradas, protegiendo tanto a compradores como a vendedores. 
+                            Este proceso adicional nos permite garantizar transacciones seguras.
                         </div>
 
                         <div class="info-box">
@@ -595,7 +606,7 @@
         }
 
         function copyCBU() {
-            const cbu = '0000184305010025590764';
+            const cbu = '0000168300000021716126';
             navigator.clipboard.writeText(cbu).then(() => {
                 alert('CBU copiado al portapapeles');
             }).catch(err => {
