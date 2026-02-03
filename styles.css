@@ -588,3 +588,70 @@ h1, h2, h3, h4, h5, h6 {
 p {
   margin-bottom: 15px;
 }
+
+/* Global modal responsive fixes */
+/* Estas reglas mejoran la apariencia de modales en pantallas pequeñas y
+   evitan que elementos full-width estiren la vista en el celular. */
+.modal,
+.modal-overlay,
+#ticketModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .modal-content,
+  .modal-overlay .modal-content,
+  .modal .modal-content,
+  #ticketModal {
+    width: 95% !important;
+    max-width: 420px !important;
+    height: auto !important;
+    max-height: 90vh !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25) !important;
+    overflow: auto !important;
+    flex-direction: column !important;
+  }
+
+  /* Ajustes para modales con columnas (modal-left / modal-right) */
+  .modal-left,
+  .modal-right {
+    width: 100% !important;
+    flex: 0 0 auto !important;
+    padding: 8px !important;
+  }
+
+  .modal-left img {
+    max-height: 200px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .modal-right h2 { font-size: 20px !important; }
+  .modal-right p  { font-size: 14px !important; }
+
+  .modal-close,
+  .modal-close-btn {
+    top: 8px !important;
+    right: 8px !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 20px !important;
+  }
+
+  /* Ajustes generales de la página para evitar estirado en móviles */
+  body, .main, .container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .event-header {
+    background-size: cover !important;
+    background-position: center !important;
+    padding: 18px 12px !important;
+    min-height: auto !important;
+  }
+}
