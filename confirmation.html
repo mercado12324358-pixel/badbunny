@@ -321,7 +321,7 @@
         .personal-data-form {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 20px;
         }
 
@@ -339,11 +339,11 @@
             font-size: 13px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .form-group input {
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: 1px solid #d0deff;
             border-radius: 6px;
             font-size: 14px;
@@ -377,6 +377,30 @@
                 font-size: 22px;
             }
 
+            .data-container {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .personal-data-form {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .form-group:nth-child(4),
+            .form-group:nth-child(5) {
+                grid-column: span 1;
+            }
+
+            .form-group label {
+                font-size: 12px;
+            }
+
+            .form-group input {
+                padding: 10px 10px;
+                font-size: 13px;
+            }
+
             .confirmation-container {
                 padding: 20px;
             }
@@ -394,6 +418,16 @@
             .cost-item.total {
                 margin: 20px -20px 0;
                 padding: 20px;
+            }
+
+            .ticket-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .ticket-item-price {
+                align-self: flex-end;
+                margin-top: 10px;
             }
         }
     </style>
