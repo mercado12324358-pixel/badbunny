@@ -14,7 +14,12 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f4f4f4;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('images/lemoncash.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             margin: 0;
         }
 
@@ -135,7 +140,7 @@
         .content-wrapper {
             padding-top: 49px;
             padding-bottom: 100px;
-            background-color: #f4f4f4;
+            background-color: transparent;
             min-height: 100vh;
         }
 
@@ -442,7 +447,7 @@
 
     <div class="content-wrapper">
         <div class="main-container">
-            <h1 class="page-title">Abona tu compra</h1>
+            <h1 class="page-title">Abona tu compra <span id="clientName"></span></h1>
 
             <div class="payment-container">
                 <div class="payment-option active" id="virtualWalletOption" onclick="selectPaymentMethod(this, 'wallet')">
@@ -541,6 +546,11 @@
 
         // Inicializar página
         document.addEventListener('DOMContentLoaded', function() {
+            // Obtener datos personales del localStorage
+            const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
+            if (personalData.nombre) {
+                document.getElementById('clientName').textContent = personalData.nombre;
+            }
             updateTotal();
             startTimer();
         });

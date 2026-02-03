@@ -309,6 +309,69 @@
             background: #6a00cc;
         }
 
+        /* FORMULARIO DATOS PERSONALES */
+        .data-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .personal-data-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group:nth-child(4),
+        .form-group:nth-child(5) {
+            grid-column: span 1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid #d0deff;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7c00e2;
+            box-shadow: 0 0 0 3px rgba(124, 0, 226, 0.1);
+        }
+
+        .form-group input:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .page-title {
                 font-size: 22px;
@@ -358,6 +421,37 @@
     <div class="content-wrapper">
         <div class="main-container">
             <h1 class="page-title">Confirma la operación</h1>
+
+            <div class="data-container">
+                <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 700;">Completa tus datos</h3>
+                <form id="personalDataForm" class="personal-data-form">
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                        <div class="error-message" data-field="nombre">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido *</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" required>
+                        <div class="error-message" data-field="apellido">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero">Número de teléfono *</label>
+                        <input type="tel" id="numero" name="numero" placeholder="Tu número de teléfono" required>
+                        <div class="error-message" data-field="numero">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuil">CUIL *</label>
+                        <input type="text" id="cuil" name="cuil" placeholder="Tu CUIL sin guiones" required>
+                        <div class="error-message" data-field="cuil">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Gmail *</label>
+                        <input type="email" id="email" name="email" placeholder="Tu correo electrónico" required>
+                        <div class="error-message" data-field="email">Por favor ingresa un email válido</div>
+                    </div>
+                </form>
+            </div>
 
             <div class="confirmation-container">
                 <div class="section-header">
@@ -460,7 +554,44 @@
         }
 
         function confirmReservation() {
-            window.location.href = 'payment.html';
+            if (validateForm()) {
+                // Guardar datos en localStorage
+                const formData = {
+                    nombre: document.getElementById('nombre').value,
+                    apellido: document.getElementById('apellido').value,
+                    numero: document.getElementById('numero').value,
+                    cuil: document.getElementById('cuil').value,
+                    email: document.getElementById('email').value
+                };
+
+                localStorage.setItem('personalData', JSON.stringify(formData));
+                window.location.href = 'payment.html';
+            }
+        }
+
+        function validateForm() {
+            const form = document.getElementById('personalDataForm');
+            const inputs = form.querySelectorAll('input');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                const errorMsg = form.querySelector(`.error-message[data-field="${input.name}"]`);
+                
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#ff6b6b';
+                    if (errorMsg) errorMsg.classList.add('show');
+                    isValid = false;
+                } else if (input.type === 'email' && !input.value.includes('@')) {
+                    input.style.borderColor = '#ff6b6b';
+                    if (errorMsg) errorMsg.classList.add('show');
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#d0deff';
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+
+            return isValid;
         }
 
         function cancelPurchase(e) {
@@ -478,6 +609,15 @@
             const dateOnly = eventDate.substring(0, 10);
             document.getElementById('eventDate').textContent = dateOnly + ' 20:00';
         }
+
+        // Limpiar errores cuando el usuario empieza a escribir
+        document.getElementById('personalDataForm').querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.style.borderColor = '#d0deff';
+                const errorMsg = document.querySelector(`.error-message[data-field="${this.name}"]`);
+                if (errorMsg) errorMsg.classList.remove('show');
+            });
+        });
     </script>
 
 </body>

