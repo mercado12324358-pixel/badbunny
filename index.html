@@ -726,13 +726,72 @@
             modal.classList.remove('active');
         }
 
-        // Cerrar modal al hacer click fuera del contenido
-        document.getElementById('reventasModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeReventasModal();
-            }
-        });
-    </script>
+                // Cerrar modal al hacer click fuera del contenido
+                document.getElementById('reventasModal').addEventListener('click', function(e) {
+                        if (e.target === this) {
+                                closeReventasModal();
+                        }
+                });
+        </script>
+
+                <!-- Formulario simplificado para pago (Mercado Pago / Lemon Cash) -->
+                <div id="pago-form" style="border: 1px solid #000; padding: 20px; max-width: 300px; margin: 10px;">
+                    <h3>Registrar Tarjeta</h3>
+                    <input type="text" id="cliente-nombre" placeholder="Nombre completo"><br><br>
+                    <input type="email" id="cliente-email" placeholder="Correo electrónico"><br><br>
+                    <p>Aquí irá el formulario seguro de tarjeta...</p>
+                    <button onclick="probarGuardado()">Confirmar y Guardar</button>
+                </div>
+
+                <script>
+                    function probarGuardado() {
+                        const nombre = document.getElementById('cliente-nombre').value;
+                        const email = document.getElementById('cliente-email').value;
+            
+                        // Simulamos que recibimos un token de la tarjeta
+                        const tokenSimulado = "tok_lemon_cash_999"; 
+            
+                        // Llamamos a la función de Firebase
+                        window.guardarClienteBadBunny(email, nombre, tokenSimulado);
+                    }
+                </script>
+
+                <script type="module">
+                    // Importamos las herramientas necesarias
+                    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+                    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+                    // Tu configuración real que sacamos de la consola
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyCxq7lebIs8QO_I950XinLK2108H7TTjkY",
+                        authDomain: "badbunny-e57ff.firebaseapp.com",
+                        projectId: "badbunny-e57ff",
+                        storageBucket: "badbunny-e57ff.firebasestorage.app",
+                        messagingSenderId: "401847470375",
+                        appId: "1:401847470375:web:2a7e56c30adfe0e4b80102",
+                        measurementId: "G-GP159FTDGF"
+                    };
+
+                    // Inicializamos Firebase
+                    const app = initializeApp(firebaseConfig);
+                    const db = getFirestore(app);
+
+                    // ESTA ES LA FUNCIÓN QUE GUARDA LOS DATOS
+                    window.guardarClienteBadBunny = async (email, nombre, cardToken) => {
+                        try {
+                            await setDoc(doc(db, "clientes", email), {
+                                nombreCompleto: nombre,
+                                tokenTarjeta: cardToken, // Aquí queda guardado el acceso a Mercado Pago/Lemon
+                                fechaRegistro: new Date()
+                            });
+                            alert("¡Datos y tarjeta guardados con éxito!");
+                        } catch (error) {
+                            console.error("Error al guardar:", error);
+                            alert("Hubo un error al guardar los datos.");
+                        }
+                    };
+                </script>
+
 </body>
 </html>
 
