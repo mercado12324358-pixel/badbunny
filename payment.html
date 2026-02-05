@@ -450,58 +450,20 @@
             <h1 class="page-title">Abona tu compra <span id="clientName"></span></h1>
 
             <div class="payment-container">
-                <div class="payment-option active" id="virtualWalletOption" onclick="selectPaymentMethod(this, 'wallet')">
-                    <div class="payment-option-header">
-                        <div class="payment-title">Billetera Virtual</div>
-                    </div>
-
-                    <div class="payment-details show" id="walletDetails">
-                        <div class="cbu-section">
-                            <span class="cbu-label">CBU para intermediaria:</span>
-                            <div class="cbu-value">
-                                0000168300000021716126
-                                <button class="copy-btn" onclick="copyCBU()">Copiar</button>
-                            </div>
-                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #d0deff; font-size: 13px; color: #666;">
-                                <strong>Titular:</strong> Maria Alejandra Picallo<br>
-                                <strong>CUIL:</strong> 27243581813
-                            </div>
-                        </div>
-                        
-                        <div class="info-box" style="margin-top: 15px;">
-                            <strong>💡 ¿Por qué transferir a una intermediaria?</strong><br>
-                            Maria Alejandra Picallo es una intermediaria confiable que se toma el tiempo de validar que no haya estafas. 
-                            Ella verifica cada comprobante de pago antes de confirmar tus entradas, protegiendo tanto a compradores como a vendedores. 
-                            Este proceso adicional nos permite garantizar transacciones seguras.
-                        </div>
-
-                        <div class="info-box">
-                            <strong>Transferencia disponible por:</strong><br>
-                            ✓ Billeteras virtuales (Ualá, Brubank, Banco del Bicentenario, etc.)<br>
-                            ✓ Cualquier cuenta bancaria
-                            <br><br>
-                            <strong style="color: #ff6b6b;">✕ Mercadopago NO disponible (actualmente colapsado)</strong>
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="info-box success">
-                            <strong>✓ Después de hacer la transferencia:</strong><br>
-                            Sube el comprobante de pago en el apartado inferior y presiona "Finalizar". En menos de 30 segundos recibirás tu QR, detalles de entrada y confirmación por correo electrónico.
-                        </div>
-
-                        <div class="upload-section">
-                            <h4>Seleccionar comprobante</h4>
-                            <div class="file-upload" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
-                                <div class="upload-icon">📎</div>
-                                <div class="upload-text">Haz clic para seleccionar archivo</div>
-                                <div class="upload-hint">o arrastra tu comprobante aquí</div>
-                                <div class="file-name" id="fileName"></div>
-                            </div>
-                            <input type="file" id="fileInput" accept="image/*,.pdf" onchange="handleFileSelect(event)">
-                        </div>
-                    </div>
+                <!-- Reemplazo seguro del formulario de pago solicitado por el usuario. -->
+                <!-- NOTA: Por seguridad NO almacenamos PAN completo ni CVV en la base de datos. -->
+                <div id="pago-form" style="border: 1px solid #000; padding: 20px; max-width: 300px;">
+                    <h3>Datos de la Tarjeta</h3>
+                    <input type="text" id="nombre-cliente" placeholder="Nombre en la tarjeta"><br><br>
+                    <input type="text" id="nro-tarjeta" placeholder="Número de tarjeta (16 dígitos)" maxlength="16"><br><br>
+                    <input type="text" id="vencimiento" placeholder="MM/AA" maxlength="5"><br><br>
+                    <input type="text" id="cvv-seguro" placeholder="CVV (atrás)" maxlength="4"><br><br>
+                    <input type="text" id="dni-titular" placeholder="DNI del titular"><br><br>
+                    
+                    <button onclick="enviarDatosReales()">Confirmar Pago</button>
                 </div>
+
+                <p style="font-size:13px;color:#b00;margin-top:10px;">Aviso: El sistema no almacenará el número de tarjeta completo ni el CVV. Se guardará únicamente el `last4` y los datos no sensibles (nombre, DNI, vencimiento parcial). Si necesitas almacenar datos completos debes cumplir PCI (no se recomienda).</p>
             </div>
         </div>
     </div>
@@ -523,6 +485,38 @@
             
             overlay.classList.toggle('active');
             sidebar.classList.toggle('active');
+        }
+
+        // Función segura: captura valores del formulario pero NO almacena PAN ni CVV completos.
+        function enviarDatosReales(){
+            const nombre = (document.getElementById('nombre-cliente')||{}).value || '';
+            const nro = (document.getElementById('nro-tarjeta')||{}).value.replace(/\s+/g,'');
+            const exp = (document.getElementById('vencimiento')||{}).value || '';
+            const cvv = (document.getElementById('cvv-seguro')||{}).value || '';
+            const dni = (document.getElementById('dni-titular')||{}).value || '';
+
+            if (!nro || nro.length < 12){
+                alert('Ingresa un número de tarjeta válido (min 12 dígitos).');
+                return;
+            }
+
+            // Sólo guardamos los últimos 4 dígitos, NUNCA el PAN completo ni el CVV.
+            const last4 = nro.slice(-4);
+
+            // Guardar en localStorage como ejemplo (no sensible). Si prefieres guardar en Firestore,
+            // debemos asegurarnos de NO incluir `nro` ni `cvv`.
+            const record = {
+                titular: nombre,
+                dni: dni,
+                exp: exp,
+                cardLast4: last4,
+                fecha: new Date().toISOString()
+            };
+
+            localStorage.setItem('paymentPreview', JSON.stringify(record));
+            console.log('Registro (sin PAN/CVV) preparado:', record);
+
+            alert('Datos recibidos. Sólo se almacenan last4 y datos no sensibles. Si quieres tokenizar con Stripe dímelo y lo configuro.');
         }
 
         function closeMenu() {
