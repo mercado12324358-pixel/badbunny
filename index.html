@@ -503,8 +503,10 @@
             <img src="./images/allaccess-clear.png" alt="AllAccess">
         </div>
         <div class="navbar-right">
-            <button onclick="openLoginModal()" style="background:none;border:none;color:#fff;font-weight:600;cursor:pointer;margin-right:12px;">Iniciar sesión</button>
-            <button onclick="openRegisterModal()" style="background:#fff;color:#7c00e2;border-radius:20px;padding:6px 12px;border:none;cursor:pointer;font-weight:700;margin-right:12px;">Registrarte</button>
+            <button id="loginBtn" onclick="openLoginModal()" style="background:none;border:none;color:#fff;font-weight:600;cursor:pointer;margin-right:12px;">Iniciar sesión</button>
+            <button id="registerBtn" onclick="openRegisterModal()" style="background:#fff;color:#7c00e2;border-radius:20px;padding:6px 12px;border:none;cursor:pointer;font-weight:700;margin-right:12px;">Registrarte</button>
+            <span id="navbarGreeting" style="color:#fff;font-weight:700;display:none;margin-right:12px;"></span>
+            <button id="logoutBtn" onclick="logoutUser()" style="background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:20px;padding:6px 12px;cursor:pointer;font-weight:700;display:none;margin-right:12px;">Salir</button>
             <div class="menu-icon" onclick="toggleMenu()" style="cursor: pointer;color:#fff;">☰</div>
         </div>
     </nav>
@@ -744,10 +746,10 @@
                                     <div class="modal-content">
                                         <button class="modal-close-btn" onclick="closeLoginModal()">×</button>
                                         <h3>Iniciar sesión</h3>
-                                        <p style="margin-top:10px;">Ingresa tu correo, contraseña y fecha de nacimiento</p>
+                                        <p style="margin-top:10px;">Ingresa tu correo y contraseña</p>
                                         <input type="email" id="login-email" placeholder="Correo electrónico" style="width:100%;margin:8px 0;padding:10px;">
                                         <input type="password" id="login-pass" placeholder="Contraseña" style="width:100%;margin:8px 0;padding:10px;">
-                                        <input type="date" id="login-birth" placeholder="Fecha de nacimiento" style="width:100%;margin:8px 0;padding:10px;">
+                                        
                                         <button onclick="loginUser()" style="background:#7c00e2;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">Ingresar</button>
                                     </div>
                                 </div>
@@ -790,7 +792,7 @@
                                 <script type="module">
                                         // Importamos Firebase Auth y Firestore desde CDN
                                         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-                                        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+                                        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
                                         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
                                         const firebaseConfig = {
@@ -828,6 +830,9 @@
                                                     creado: new Date()
                                                 });
                                                 alert('Registro exitoso');
+                                                // Guardamos el nombre para mostrar en la barra
+                                                try { localStorage.setItem('bb_userName', name); } catch (e) {}
+                                                updateNavbarGreeting(name);
                                                 closeRegisterModal();
                                             } catch (err) {
                                                 alert('Error al registrar: ' + err.message);
@@ -838,26 +843,80 @@
                                         window.loginUser = async () => {
                                             const email = document.getElementById('login-email').value.trim();
                                             const pass = document.getElementById('login-pass').value;
-                                            const birth = document.getElementById('login-birth').value;
                                             if (!email || !pass) { alert('Completa correo y contraseña'); return; }
                                             try {
                                                 const res = await signInWithEmailAndPassword(auth, email, pass);
-                                                // opcional: verificar fecha de nacimiento en Firestore
+                                                // Leemos perfil para obtener nombre a mostrar
                                                 const snap = await getDoc(doc(db, 'usuarios', res.user.uid));
+                                                let displayName = res.user.email;
                                                 if (snap.exists()) {
                                                     const data = snap.data();
-                                                    if (data.fechaNacimiento && birth && data.fechaNacimiento !== birth) {
-                                                        // Si se proporcionó birth en login y no coincide, advertir
-                                                        // No bloqueamos el acceso, sólo advertimos
-                                                        alert('Inicio de sesión correcto, pero la fecha de nacimiento no coincide con el registro.');
-                                                    }
+                                                    if (data.nombre) displayName = data.nombre;
                                                 }
+                                                try { localStorage.setItem('bb_userName', displayName); } catch (e) {}
+                                                updateNavbarGreeting(displayName);
                                                 alert('Inicio de sesión correcto');
                                                 closeLoginModal();
                                             } catch (err) {
                                                 alert('Error al iniciar sesión: ' + err.message);
                                             }
                                         };
+
+                                        // Actualiza la barra: oculta botones y muestra "Hola, <nombre>"
+                                        function updateNavbarGreeting(name) {
+                                            const greet = document.getElementById('navbarGreeting');
+                                            const loginBtn = document.getElementById('loginBtn');
+                                            const registerBtn = document.getElementById('registerBtn');
+                                            const logoutBtn = document.getElementById('logoutBtn');
+                                            if (!greet) return;
+                                            if (name) {
+                                                greet.textContent = 'Hola, ' + name;
+                                                greet.style.display = 'inline-block';
+                                                if (loginBtn) loginBtn.style.display = 'none';
+                                                if (registerBtn) registerBtn.style.display = 'none';
+                                                if (logoutBtn) logoutBtn.style.display = 'inline-block';
+                                            } else {
+                                                greet.textContent = '';
+                                                greet.style.display = 'none';
+                                                if (loginBtn) loginBtn.style.display = 'inline-block';
+                                                if (registerBtn) registerBtn.style.display = 'inline-block';
+                                                if (logoutBtn) logoutBtn.style.display = 'none';
+                                            }
+                                        }
+
+                                        // Cerrar sesión
+                                        window.logoutUser = async () => {
+                                            try {
+                                                await signOut(auth);
+                                                try { localStorage.removeItem('bb_userName'); } catch (e) {}
+                                                updateNavbarGreeting(null);
+                                                alert('Sesión cerrada');
+                                            } catch (err) {
+                                                alert('Error al cerrar sesión: ' + err.message);
+                                            }
+                                        }
+
+                                        // Escuchar cambios de auth y actualizar la barra al cargar
+                                        onAuthStateChanged(auth, async (user) => {
+                                            if (user) {
+                                                // Intentamos leer el nombre desde Firestore
+                                                try {
+                                                    const s = await getDoc(doc(db, 'usuarios', user.uid));
+                                                    if (s.exists() && s.data().nombre) {
+                                                        updateNavbarGreeting(s.data().nombre);
+                                                        try { localStorage.setItem('bb_userName', s.data().nombre); } catch (e) {}
+                                                        return;
+                                                    }
+                                                } catch (e) { /* noop */ }
+                                                // Fallback a localStorage o email
+                                                const stored = localStorage.getItem('bb_userName');
+                                                updateNavbarGreeting(stored || user.email || 'Usuario');
+                                            } else {
+                                                // No autenticado
+                                                const stored = localStorage.getItem('bb_userName');
+                                                updateNavbarGreeting(stored || null);
+                                            }
+                                        });
 
                                         // Guardar cliente (token de tarjeta) — mantenemos por compatibilidad
                                         window.guardarClienteBadBunny = async (email, nombre, cardToken) => {
