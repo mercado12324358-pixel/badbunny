@@ -4,7 +4,7 @@
   <div id="authModal" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);">
     <div style="background:#fff;border-radius:12px;max-width:420px;width:92%;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.3);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <strong>Iniciar sesión / Registrarse</strong>
+        <strong>Inicia sesión o regístrate para continuar</strong>
         <button id="authCloseBtn" style="background:#eee;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">×</button>
       </div>
       <div id="authTabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">

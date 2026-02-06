@@ -723,7 +723,8 @@
             if (selectedDate === '13' || selectedDate === '14' || selectedDate === '15') {
                 // Guardar la fecha seleccionada en sessionStorage
                 sessionStorage.setItem('selectedDate', selectedDate);
-                window.location.href = 'tickets.html';
+                // Usar requireAuthToNavigate para validar sesión antes de navegar
+                window.auth.requireAuthToNavigate('tickets.html');
             }
         }
 
