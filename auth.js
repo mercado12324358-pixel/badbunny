@@ -67,6 +67,8 @@
       e.preventDefault();
       // En este ejemplo simple no validamos contra servidor. Marcar como autenticado.
       localStorage.setItem('logged','1');
+      // Actualizar estado del botón si la función existe
+      if (window.checkAuthStatus) window.checkAuthStatus();
       hideModal();
       if (pendingNavigation) location.href = pendingNavigation;
     });
@@ -75,6 +77,8 @@
       e.preventDefault();
       // Simular registro y logueo inmediato
       localStorage.setItem('logged','1');
+      // Actualizar estado del botón si la función existe
+      if (window.checkAuthStatus) window.checkAuthStatus();
       hideModal();
       if (pendingNavigation) location.href = pendingNavigation;
     });

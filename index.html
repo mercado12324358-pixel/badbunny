@@ -130,6 +130,33 @@
             color: #7c00e2;
         }
 
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 9998;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-weight: 600;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
         .banner {
             width: 100%;
             height: auto;
@@ -199,6 +226,7 @@
             background: #ccc;
             cursor: not-allowed;
             opacity: 0.6;
+            pointer-events: none;
         }
 
         .section {
@@ -483,8 +511,8 @@
 </head>
 <body>
     <!-- MODAL REVENTAS -->
-    <div class="modal-overlay active" id="reventasModal">
-        <div class="modal-content">
+    <div class="modal-overlay" id="reventasModal">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close-btn" onclick="closeReventasModal()">×</button>
             <h3>PLATAFORMA DE REVENTAS DE ENTRADAS DE ALLACCESS</h3>
             <p><strong>¡Bienvenido a nuestro sitio de reventas seguras de entradas!</strong></p>
@@ -519,7 +547,7 @@
             <button class="menu-close" onclick="closeMenu()">×</button>
         </div>
         <div class="menu-items">
-            <a href="my-entries.html" class="menu-item">Mis entradas</a>
+            <button id="myEntriesBtn" onclick="goToMyEntries()" style="background:none;border:none;color:#000;padding:0;text-align:left;cursor:pointer;font-size:14px;" class="menu-item">Mis entradas</button>
             <a href="index.html" class="menu-item">Inicio</a>
         </div>
     </div>
@@ -538,7 +566,7 @@
                 <option value="14">14/02/2026 20:00 - 14 de febrero de 2026 a las 20:00</option>
                 <option value="15">15/02/2026 20:00 - 15 de febrero de 2026 a las 20:00</option>
             </select>
-            <button id="buyBtn" onclick="goToTickets()" disabled>Ver entradas</button>
+            <button id="buyBtn" onclick="return goToTickets()" disabled>Ver entradas</button>
         </div>
     </div>
 
@@ -681,6 +709,23 @@
     </footer>
 
     <script>
+        function showToast(message) {
+            // Eliminar toast anterior si existe
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) existingToast.remove();
+
+            // Crear nuevo toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         function toggleMenu() {
             const overlay = document.getElementById('menuOverlay');
             const sidebar = document.getElementById('menuSidebar');
@@ -701,13 +746,24 @@
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', closeMenu);
         });
-
         function updateButtonStatus() {
             const select = document.getElementById('dateSelect');
             const btn = document.getElementById('buyBtn');
             const value = select.value;
+            const isAuthenticated = localStorage.getItem('logged') === '1';
             
-            if (value === '13' || value === '14' || value === '15') {
+            // Si no está autenticado, el botón siempre está deshabilitado
+            if (!isAuthenticated) {
+                btn.disabled = true;
+                btn.textContent = 'Ver entradas';
+                return;
+            }
+            
+            // Si está autenticado, verificar si seleccionó fecha válida
+            if (value === '13') {
+                btn.disabled = false;
+                btn.textContent = 'Agotado';
+            } else if (value === '14' || value === '15') {
                 btn.disabled = false;
                 btn.textContent = 'Ver entradas';
             } else {
@@ -716,16 +772,54 @@
             }
         }
         
+        function checkAuthStatus() {
+            // Actualizar estado del botón cuando cambié el estado de autenticación
+            updateButtonStatus();
+        }
+        
+        function goToMyEntries() {
+            // Validar si está autenticado
+            if (localStorage.getItem('logged') === '1') {
+                closeMenu();
+                window.location.href = 'my-entries.html';
+            } else {
+                // Mostrar cartel simple
+                showToast('Inicia sesión o regístrate para continuar');
+            }
+        }
+        
         function goToTickets() {
+            const btn = document.getElementById('buyBtn');
+            
+            // Si el botón está deshabilitado, bloquear completamente
+            if (btn.disabled) {
+                showToast('Inicia sesión o regístrate para continuar');
+                return false;
+            }
+            
+            // Verificar si está autenticado - si no, bloquear completamente
+            if (localStorage.getItem('logged') !== '1') {
+                showToast('Inicia sesión o regístrate para continuar');
+                return false;
+            }
+
             const select = document.getElementById('dateSelect');
             const selectedDate = select.value;
             
-            if (selectedDate === '13' || selectedDate === '14' || selectedDate === '15') {
+            // Si seleccionó el 13 (agotado)
+            if (selectedDate === '13') {
+                showToast('Las entradas del 13 de febrero están agotadas');
+                return false;
+            }
+            
+            // Si seleccionó 14 o 15
+            if (selectedDate === '14' || selectedDate === '15') {
                 // Guardar la fecha seleccionada en sessionStorage
                 sessionStorage.setItem('selectedDate', selectedDate);
-                // Usar requireAuthToNavigate para validar sesión antes de navegar
-                window.auth.requireAuthToNavigate('tickets.html');
+                window.location.href = 'tickets.html';
+                return true;
             }
+            return false;
         }
 
         function closeReventasModal() {
@@ -734,11 +828,26 @@
         }
 
                 // Cerrar modal al hacer click fuera del contenido
-                document.getElementById('reventasModal').addEventListener('click', function(e) {
+                const reventasModal = document.getElementById('reventasModal');
+                if (reventasModal) {
+                    reventasModal.addEventListener('click', function(e) {
                         if (e.target === this) {
-                                closeReventasModal();
+                            closeReventasModal();
                         }
-                });
+                    });
+                    // Agregar clase active al cargar la página
+                    reventasModal.classList.add('active');
+                }
+
+                // Verificar estado de autenticación al cargar la página
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        updateButtonStatus();
+                    });
+                } else {
+                    // Si el DOM ya está cargado
+                    updateButtonStatus();
+                }
         </script>
 
                 <!-- Formulario simplificado para pago (Mercado Pago / Lemon Cash) -->
